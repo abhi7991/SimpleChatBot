@@ -1,69 +1,75 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Jun  9 22:08:50 2024
-
+strea
 @author: abhis
 """
 
+import os
 import streamlit as st
 import openai
-from streamlit_chat import message
-import os
+
 from dotenv import load_dotenv
-import pandas as pd
-import requests
+load_dotenv()
 
-def load_env_variables():
-    load_dotenv()
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
+# Get OpenAI API key from environment
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+openai.api_key = OPENAI_API_KEY
 
-def api_calling(prompt):
-    completions = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5,
+# Configure Streamlit page settings
+st.set_page_config(
+    page_title="MovieMatch",
+    page_icon="🎬",
+    layout="centered"
+)
+
+# Initialize chat session if not already present
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# Streamlit page title
+st.title("🎬 MovieMatch - Your Personal Movie Guide")
+
+# Display chat history
+for message in st.session_state.chat_history:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Input field for user's message
+user_prompt = st.chat_input("What do you feel like watching?")
+
+if user_prompt:
+    # Add user's message to chat history
+    st.chat_message("user").markdown(user_prompt)
+    st.session_state.chat_history.append({"role": "user", "content": user_prompt})
+    
+    # Chain of thought prompting system message
+    system_message = (
+        "You are a movie recommendation assistant. "
+        "Your goal is to recommend movies based on the user's preferences. "
+        "Only respond to queries related to movies, movie recommendations, or movie genres. "        
+        "Follow these steps to provide a thoughtful and detailed recommendation: "
+        "1. Identify the user's genre and mood preferences. Ask them if they like comedies, dramas, thrillers, etc., and if they are looking for something light-hearted, serious, thrilling, etc. "
+        "2. Determine the time frame for movie selection. Check if they prefer recent releases, classics, or a specific decade. "
+        "3. Consider any specific themes or elements. Inquire if they want movies with certain themes like friendship, adventure, romance, or elements like strong female leads or historical settings. "
+        "4. If the user mentions a specific movie or a type of movie they enjoyed, find out what aspects they liked about it (e.g., similar plot, style, or mood). "
+        "5. Provide a list of movies and explain why each recommendation fits the user's preferences. If the user requests a movie similar to a specific title, highlight similarities in plot, mood, or themes. "
+        "Your responses should be detailed and help the user understand why you chose each recommendation."
+        "Do not talk about anything else except movies and cinema"
     )
-    message = completions.choices[0].text
-    return message
-
-def get_text():
-    input_text = st.text_input("Write here:", key="input")
-    return input_text
-
-def initialize_session_state():
-    if 'user_input' not in st.session_state:
-        st.session_state['user_input'] = []
-    if 'openai_response' not in st.session_state:
-        st.session_state['openai_response'] = []
-
-def display_chat_history():
-    if st.session_state['user_input']:
-        for i in range(len(st.session_state['user_input']) - 1, -1, -1):
-            # Display user input
-            message(st.session_state["user_input"][i], key=str(i), avatar_style="icons")
-            # Display OpenAI response
-            message(st.session_state['openai_response'][i], avatar_style="miniavs", is_user=True, key=str(i) + 'data_by_user')
-
-def main():
-    load_env_variables()
     
-    st.title("ChatGPT ChatBot With Streamlit and OpenAI")
-    
-    initialize_session_state()
-    
-    user_input = get_text()
-    
-    if user_input:
-        output = api_calling(user_input)
-        output = output.lstrip("\n")
-        # Store the output
-        st.session_state.openai_response.append(user_input)
-        st.session_state.user_input.append(output)
-    
-    display_chat_history()
+    # Send user's message and system prompt to OpenAI API
+    response = openai.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system_message},
+            *st.session_state.chat_history
+        ]
+    )
 
-if __name__ == "__main__":
-    main()
+    assistant_response = response.choices[0].message.content.strip()#response.choices[0].message['content']
+    st.session_state.chat_history.append({"role": "assistant", "content": assistant_response})
+
+    # Display the assistant's response
+    with st.chat_message("assistant"):
+        st.markdown(assistant_response)
