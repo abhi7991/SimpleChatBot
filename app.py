@@ -30,6 +30,16 @@ if "chat_history" not in st.session_state:
 # Streamlit page title
 st.title("🎬 MovieMatch - Your Personal Movie Guide")
 
+# Load and display images from local repository
+image_dir = os.getcwd()+"\someImages"  # Directory where your images are stored
+images = os.listdir(image_dir)
+
+# Display images in a sidebar
+st.sidebar.title("MovieMatch Gallery")
+for image in images:
+    image_path = os.path.join(image_dir, image)
+    st.sidebar.image(image_path, caption=None, use_column_width=True)
+
 # Display chat history
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):

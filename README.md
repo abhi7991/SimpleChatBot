@@ -6,7 +6,7 @@ Have you ever found yourself stuck at home on a Friday night with takeout, spend
 Say goodbye to wasted time and endless scrolling because we have the perfect solution for you!
 
 
-## Welcome to MovieMatch -  Your Personal Movie Guide**
+## Welcome to MovieMatch -  Your Personal Movie Guide
 
 ### How It Works
 
@@ -16,14 +16,18 @@ Save Time and Enjoy Your Movie Night: With MovieMatch, you'll spend less time se
 
 ### Get Started
 
-Create a .env file with the following parameters
+1. Create a .env file with the following parameters
+
+```
 
 OPENAI_API_KEY=*****************
 OPENAI_BASE_URL=*****************
 
-Install the requirements .txt
+```
 
-streamlit run app.py
+2. Install the requirements .txt
+
+3. streamlit run app.py
 
 
 Say goodbye to movie night indecision and hello to MovieMatch – your personal movie guide!
