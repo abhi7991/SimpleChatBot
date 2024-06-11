@@ -23,50 +23,45 @@ st.set_page_config(
     layout="centered"
 )
 
-# Initialize chat session if not already present
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+# Initialize session state variables
+def initialize_session_state():
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    if "suggested_question_clicked" not in st.session_state:
+        st.session_state.suggested_question_clicked = False
 
-# Streamlit page title
-st.title("🎬 MovieMatch - Your Personal Movie Guide")
+# Display images in the sidebar
+def display_images_in_sidebar(image_dir):
+    st.sidebar.title("MovieMatch Gallery")
+    images = os.listdir(image_dir)
+    for image in images:
+        image_path = os.path.join(image_dir, image)
+        st.sidebar.image(image_path, caption=None, use_column_width=True)
 
-# Load and display images from local repository
-image_dir = os.getcwd()+"\someImages"  # Directory where your images are stored
-images = os.listdir(image_dir)
+# Display the chat history
+def display_chat_history():
+    for message in st.session_state.chat_history:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# Display images in a sidebar
-st.sidebar.title("MovieMatch Gallery")
-for image in images:
-    image_path = os.path.join(image_dir, image)
-    st.sidebar.image(image_path, caption=None, use_column_width=True)
+# Handle suggested questions
+def display_suggested_questions(suggested_questions):
+    if not st.session_state.suggested_question_clicked:
+        st.subheader("Suggested Questions")
+        for question in suggested_questions:
+            if st.button(question):
+                st.session_state.suggested_question_clicked = True
+                handle_user_input(question)
+                break
 
-# Display chat history
-for message in st.session_state.chat_history:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Handle user input
+def handle_user_input(user_input):
+    st.chat_message("user").markdown(user_input)
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
+    generate_and_display_response()
 
-# Input field for user's message
-user_prompt = st.chat_input("What do you feel like watching?")
-
-if user_prompt:
-    # Add user's message to chat history
-    st.chat_message("user").markdown(user_prompt)
-    st.session_state.chat_history.append({"role": "user", "content": user_prompt})
-    
-    # Chain of thought prompting system message
-#    system_message = (
-#        "You are a movie recommendation assistant. "
-#        "Your goal is to recommend movies based on the user's preferences. "
-#        "Only respond to queries related to movies, movie recommendations, or movie genres. "        
-#        "Follow these steps to provide a thoughtful and detailed recommendation: "
-#        "1. Identify the user's genre and mood preferences. Ask them if they like comedies, dramas, thrillers, etc., and if they are looking for something light-hearted, serious, thrilling, etc. "
-#        "2. Determine the time frame for movie selection. Check if they prefer recent releases, classics, or a specific decade. "
-#        "3. Consider any specific themes or elements. Inquire if they want movies with certain themes like friendship, adventure, romance, or elements like strong female leads or historical settings. "
-#        "4. If the user mentions a specific movie or a type of movie they enjoyed, find out what aspects they liked about it (e.g., similar plot, style, or mood). "
-#        "5. Provide a list of movies and explain why each recommendation fits the user's preferences. If the user requests a movie similar to a specific title, highlight similarities in plot, mood, or themes. "
-#        "Your responses should be detailed and help the user understand why you chose each recommendation."
-#        "Do not talk about anything else except movies and cinema. If Questioned about anything else please refrain from answering anything else apart from Movies and Cinema"
-#    )
+# Generate and display response from OpenAI
+def generate_and_display_response():
     system_message = (
         "You are a movie recommendation assistant. "
         "Your primary goal is to recommend movies based on the user's preferences and provide detailed explanations for each suggestion. "
@@ -96,7 +91,6 @@ if user_prompt:
         "Use bullet points or numbered lists where appropriate to make the information easy to read and follow."
     )
     
-    
     # Send user's message and system prompt to OpenAI API
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -109,6 +103,36 @@ if user_prompt:
     assistant_response = response.choices[0].message.content.strip()#response.choices[0].message['content']
     st.session_state.chat_history.append({"role": "assistant", "content": assistant_response})
 
-    # Display the assistant's response
     with st.chat_message("assistant"):
         st.markdown(assistant_response)
+
+# Main function to run the Streamlit app
+def main():
+    initialize_session_state()
+
+    st.title("🎬 MovieMatch - Your Personal Movie Guide")
+
+    # Load and display images from local repository
+    image_dir = os.path.join(os.getcwd(), "someImages")
+    display_images_in_sidebar(image_dir)
+
+    display_chat_history()
+
+    # List of suggested questions
+    suggested_questions = [
+        "Can you recommend a good comedy movie?",
+        "I'm in the mood for a thriller, any suggestions?",
+        "What's a good classic movie to watch?",
+        "Can you suggest a movie with a strong female lead?",
+        "What's a recent release that's worth watching?",
+    ]
+
+    display_suggested_questions(suggested_questions)
+
+    user_prompt = st.chat_input("What do you feel like watching?")
+
+    if user_prompt:
+        handle_user_input(user_prompt)
+
+if __name__ == "__main__":
+    main()
