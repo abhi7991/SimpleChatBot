@@ -1,5 +1,6 @@
 # MovieMatch
 
+![alt text](images/logo.jpg)
 
 Have you ever found yourself stuck at home on a Friday night with takeout, spending more time searching for a movie than actually watching one?
 
@@ -30,5 +31,8 @@ OPENAI_BASE_URL=*****************
 
 4. streamlit run app.py
 
-
 Say goodbye to movie night indecision and hello to MovieMatch – your personal movie guide!
+
+## MovieMatch Framework 
+
+![alt text](images/framework.jpg)
