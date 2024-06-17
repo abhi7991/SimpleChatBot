@@ -15,8 +15,9 @@ Tell Us Your Preferences: Simply let MovieMatch know what you're in the mood for
 Save Time and Enjoy Your Movie Night: With MovieMatch, you'll spend less time searching and more time enjoying your favorite movies. Say goodbye to endless scrolling and hello to a perfect movie match every time!
 
 ### Get Started
+1. Clone the repository
 
-1. Create a .env file with the following parameters
+2. Create a .env file with the following parameters
 
 ```
 
@@ -25,9 +26,9 @@ OPENAI_BASE_URL=*****************
 
 ```
 
-2. Install the requirements .txt
+3. Install the requirements .txt
 
-3. streamlit run app.py
+4. streamlit run app.py
 
 
 Say goodbye to movie night indecision and hello to MovieMatch – your personal movie guide!

@@ -29,6 +29,8 @@ def initialize_session_state():
         st.session_state.chat_history = []
     if "suggested_question_clicked" not in st.session_state:
         st.session_state.suggested_question_clicked = False
+    if "initial_prompt_shown" not in st.session_state:
+        st.session_state.initial_prompt_shown = False
 
 # Display images in the sidebar
 def display_images_in_sidebar(image_dir):
@@ -44,7 +46,6 @@ def display_chat_history():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-# Handle suggested questions
 def display_suggested_questions(suggested_questions):
     if not st.session_state.suggested_question_clicked:
         st.subheader("Suggested Questions")
@@ -88,6 +89,7 @@ def generate_and_display_response():
         "   - You could say, 'If you liked [Movie Title] for its suspense and complex characters, you might enjoy [Recommended Movie] which has a similar gripping plot and intricate character development.' "
     
         "Ensure that your responses are detailed, formatted in a clear and organized manner, and help the user understand why you chose each recommendation. "
+        "Make the important terms you feel in bold"
         "Use bullet points or numbered lists where appropriate to make the information easy to read and follow."
     )
     
@@ -129,10 +131,16 @@ def main():
 
     display_suggested_questions(suggested_questions)
 
-    user_prompt = st.chat_input("What do you feel like watching?")
-
-    if user_prompt:
-        handle_user_input(user_prompt)
+    # Display the initial prompt only if it hasn't been shown before
+    if not st.session_state.initial_prompt_shown:
+        user_prompt = st.chat_input("What do you feel like watching?")
+        if user_prompt:
+            st.session_state.initial_prompt_shown = True  # Set flag to indicate prompt has been shown
+            handle_user_input(user_prompt)
+    else:
+        user_prompt = st.chat_input("")  # Display input field without a prompt
+        if user_prompt:
+            handle_user_input(user_prompt)
 
 if __name__ == "__main__":
     main()
