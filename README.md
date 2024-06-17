@@ -6,6 +6,7 @@ Have you ever found yourself stuck at home on a Friday night with takeout, spend
 
 Say goodbye to wasted time and endless scrolling because we have the perfect solution for you!
 
+[Preview of MovieMatch](https://youtu.be/gbNlMVMebjQ)
 
 ## Welcome to MovieMatch -  Your Personal Movie Guide
 
