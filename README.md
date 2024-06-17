@@ -35,4 +35,4 @@ Say goodbye to movie night indecision and hello to MovieMatch – your personal 
 
 ## MovieMatch Framework 
 
-![alt text](Images/framework.jpg)
+![alt text](Images/framework.png)
