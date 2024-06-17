@@ -1,6 +1,6 @@
 # MovieMatch
 
-![alt text](images/logo.jpg)
+![alt text](Images/logo.jpg)
 
 Have you ever found yourself stuck at home on a Friday night with takeout, spending more time searching for a movie than actually watching one?
 
@@ -35,4 +35,4 @@ Say goodbye to movie night indecision and hello to MovieMatch – your personal 
 
 ## MovieMatch Framework 
 
-![alt text](images/framework.jpg)
+![alt text](Images/framework.jpg)
